@@ -1,0 +1,44 @@
+import mesa
+
+from .model import BoltzmannWealthModel
+
+
+def agent_portrayal(agent):
+    portrayal = {"Shape": "circle", "Filled": "true", "r": 0.5}
+
+    if agent.wealth >= 3:
+        portrayal["Color"] = "green"
+        portrayal["Layer"] = 0
+    elif 1>= agent.wealth < 3:
+        portrayal["Color"] = "red"
+        portrayal["Layer"] = 1
+        portrayal["r"] = 0.4
+    else:
+        portrayal["Color"] = "grey"
+        portrayal["Layer"] = 2
+        portrayal["r"] = 0.2
+    return portrayal
+
+
+grid = mesa.visualization.CanvasGrid(agent_portrayal, 20, 20, 500, 500)
+chart = mesa.visualization.ChartModule(
+    [{"Label": "Gini", "Color": "#0000FF"}], data_collector_name="datacollector"
+)
+
+model_params = {
+    "N": mesa.visualization.Slider(
+        "Number of agents",
+        100,
+        2,
+        200,
+        1,
+        description="Choose how many agents to include in the model",
+    ),
+    "width": 20,
+    "height": 20,
+}
+
+server = mesa.visualization.ModularServer(
+    BoltzmannWealthModel, [grid, chart], "Money Model", model_params
+)
+server.port = 8521
